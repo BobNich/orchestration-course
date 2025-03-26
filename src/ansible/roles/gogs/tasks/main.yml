@@ -10,6 +10,7 @@
     dest: "{{ item.dest }}"
   loop:
     - { src: docker-compose.yml, dest: '{{ service_stack_file }}' }
+    - { src: Dockerfile, dest: '{{ service_dockerfile_file }}' }
     - { src: git.ini, dest: '{{ service_conf_file }}' }
 
 - name: Deploy Gogs using Docker Compose
