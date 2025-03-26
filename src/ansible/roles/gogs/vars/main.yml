@@ -3,6 +3,8 @@
 service_stack_name: "gogs"
 service_directory: "{{ stacks_directory }}/{{ service_stack_name }}"
 service_stack_file: "{{ service_directory }}/docker-compose.yml"
+service_conf_file: "{{ service_directory }}/app.ini"
+
 
 # networks
 internal_network_name: "gogs_internal_network"

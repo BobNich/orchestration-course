@@ -5,6 +5,9 @@ stacks_directory: "/home/{{ ansible_user }}"
 # public network
 public_network_name: "public_network"
 
+# brand
+brand_name: "Yawl"
+
 # domains
 local_domain: "localhost"
 global_domain: "{{ vault_domain_name }}"
