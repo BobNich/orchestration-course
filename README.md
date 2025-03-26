@@ -5,9 +5,8 @@ The infrastructure is managed through Ansible for automation and includes severa
 
 ## Unsolved Problems
 
-1. Provide predefined Gogs `app.ini` configuration
-2. Automate Jenkins agent configuration
-3. Automate Jenkins controller configuration
+1. Automate Jenkins agent configuration
+2. Automate Jenkins controller configuration
 
 ## Contributing
 
