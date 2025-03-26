@@ -1,0 +1,25 @@
+---
+# core
+service_name: "{{ jenkins_service }}"
+
+# controller
+controller_ip_addr: "{{ jenkins_controller_dns_ip }}"
+controller_name: "{{ service_name }}-controller"
+controller_image: "jenkins/jenkins:lts-jdk21"
+controller_public_port: "8080"
+controller_volume_name: "jenkins_volume"
+controller_volume_path: "/var/jenkins_home"
+
+# agent
+agent_ip_addr: "{{ jenkins_agent_dns_ip }}"
+agent_name: "{{ service_name }}-agent"
+agent_image: "{{ registry_global_domain }}/jenkins-agent"
+agent_volume_name: "jenkins_agent_volume"
+agent_volume_path: "/home/jenkins/agent"
+
+# secrets
+agent_target_ssh_dir: "/home/jenkins/.ssh"
+
+# routes
+http_route: "{{ jenkins_local_domain }}"
+https_route: "{{ jenkins_global_domain }}"

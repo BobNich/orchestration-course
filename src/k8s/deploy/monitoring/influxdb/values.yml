@@ -1,0 +1,20 @@
+fullnameOverride: "yawl-influxdb"
+
+adminUser:
+  organization: "Yawl"
+  bucket: "main"
+  existingSecret: influxdb2-auth
+
+ingress:
+  enabled: true
+  className: nginx
+  hostname: influxdb.localhost
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+  path: /
+
+persistence:
+  enabled: true
+  useExisting: true
+  name: influxdb-pvc
+  storageClass: local-storage

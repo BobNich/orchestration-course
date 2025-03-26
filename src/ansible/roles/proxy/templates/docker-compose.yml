@@ -1,0 +1,47 @@
+networks:
+  public-network:
+    driver: bridge
+    internal: false
+    name: "{{ public_network_name }}"
+  dns-network:
+    external: true
+    name: "{{ dns_network_name }}"
+
+services:
+  traefik:
+    image: "{{ service_image }}"
+    container_name: "{{ service_name }}"
+    ports:
+      - "{{ https_port }}:{{ https_port }}"
+      - "{{ http_port }}:{{ http_port }}"
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: bind
+        source: ./traefik.yml
+        target: /etc/traefik/traefik.yml
+        read_only: true
+      - type: bind
+        source: ./
+        target: /certs/
+    networks:
+      public-network:
+      dns-network:
+        ipv4_address: {{ service_ip_addr }}
+    dns: {{ dns_service_ip }}
+    environment:
+      CF_DNS_API_TOKEN: {{ vault_cloudflare_dns_api_token }}
+    labels:
+      # core
+      - traefik.enable=true
+      - traefik.http.services.{{ service_name }}.loadbalancer.server.port={{ service_port }}
+      # http
+      - traefik.http.routers.{{ service_name }}.entrypoints=web_insecure
+      - traefik.http.routers.{{ service_name }}.rule=Host(`{{ http_route }}`)
+      - traefik.http.routers.{{ service_name }}.service=api@internal
+      # tls
+      - traefik.http.routers.traefik.tls=false
+      - traefik.http.routers.traefik.tls.domains[0].main={{ domain_name }}
+      - traefik.http.routers.traefik.tls.domains[0].sans=*.{{ domain_name }}

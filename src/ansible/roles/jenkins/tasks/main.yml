@@ -1,0 +1,8 @@
+---
+- name: Configure SSH
+  ansible.builtin.import_tasks:
+    file: ssh.yml
+
+- name: Deploy Jenkins
+  ansible.builtin.import_tasks:
+    file: deploy.yml

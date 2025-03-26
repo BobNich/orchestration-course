@@ -1,0 +1,68 @@
+networks:
+  public-network:
+    external: true
+    name: "{{ public_network_name }}"
+  dns-network:
+    external: true
+    name: "{{ dns_network_name }}"
+  internal-network:
+    internal: true
+    name: "{{ internal_network_name }}"
+
+volumes:
+  data:
+    name: "{{ service_volume_name }}"
+    driver: local
+  database-data:
+    name: "{{ service_database_volume_name }}"
+    driver: local
+
+services:
+  postgres:
+    image: "{{ service_database_image }}"
+    container_name: "{{ service_database_name }}"
+    restart: always
+    volumes:
+      - type: volume
+        source: database-data
+        target: "{{ service_database_volume_path }}"
+    networks:
+      internal-network:
+    environment:
+      - "POSTGRES_USER={{ database_user }}"
+      - "POSTGRES_PASSWORD={{ database_password }}"
+      - "POSTGRES_DB={{ database_name }}"
+
+  gogs:
+    image: "{{ service_image }}"
+    depends_on:
+      - postgres
+    container_name: "{{ service_name }}"
+    restart: always
+    ports:
+      - "{{ service_ssh_port }}:{{ ssh_port }}"
+    volumes:
+      - type: volume
+        source: data
+        target: "{{ service_volume_path }}"
+    networks:
+      public-network:
+      internal-network:
+      dns-network:
+        ipv4_address: {{ service_ip_addr }}
+    dns: {{ dns_service_ip }}
+    labels:
+      # core
+      - traefik.enable=true
+      - traefik.http.services.{{ service_name }}.loadbalancer.server.port={{ service_web_port }}
+      # http
+      - traefik.http.routers.{{ service_name }}.entrypoints=web_insecure
+      - traefik.http.routers.{{ service_name }}.rule=Host(`{{ http_route }}`)
+      # http -> https bridge
+      - traefik.http.routers.{{ service_name }}.middlewares=https_redirect
+      - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
+      # https
+      - traefik.http.routers.{{ service_name }}-secure.entrypoints=web_secure
+      - traefik.http.routers.{{ service_name }}-secure.rule=Host(`{{ https_route }}`)
+      - traefik.http.routers.{{ service_name }}-secure.tls=true
+      - traefik.http.routers.{{ service_name }}-secure.tls.certresolver=cloudflare

@@ -1,0 +1,10 @@
+. {
+  hosts {
+    {{ proxy_dns_ip }} {{ git_global_domain }}
+    {{ proxy_dns_ip }} {{ registry_global_domain }}
+    {{ proxy_dns_ip }} {{ jenkins_global_domain }}
+    fallthrough
+  }
+  forward . 1.1.1.1 1.0.0.1
+  errors
+}

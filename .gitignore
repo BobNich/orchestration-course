@@ -1,0 +1,7 @@
+.idea
+*.iml
+.vagrant
+.ssh
+.vault_password
+**/vault/main.yml
+charts/

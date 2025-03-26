@@ -1,0 +1,6 @@
+---
+# deploy
+service_stack_name: "dns"
+service_directory: "{{ stacks_directory }}/{{ service_stack_name }}"
+service_stack_file: "{{ service_directory }}/docker-compose.yml"
+coredns_config_file: "{{ service_directory }}/Corefile"

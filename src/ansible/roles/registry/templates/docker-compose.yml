@@ -1,0 +1,41 @@
+networks:
+  public-network:
+    external: true
+    name: "{{ public_network_name }}"
+  dns-network:
+    external: true
+    name: "{{ dns_network_name }}"
+
+volumes:
+  data:
+    name: "{{ service_volume_name }}"
+    driver: local
+
+services:
+  registry:
+    image: "{{ service_image }}"
+    container_name: "{{ service_name }}"
+    volumes:
+      - type: volume
+        source: data
+        target: "{{ service_volume_path }}"
+    networks:
+      public-network:
+      dns-network:
+        ipv4_address: {{ service_ip_addr }}
+    dns: {{ dns_service_ip }}
+    labels:
+      # core
+      - traefik.enable=true
+      - traefik.http.services.{{ service_name }}.loadbalancer.server.port={{ service_port }}
+      # http
+      - traefik.http.routers.{{ service_name }}.entrypoints=web_insecure
+      - traefik.http.routers.{{ service_name }}.rule=Host(`{{ http_route }}`)
+      # http -> https bridge
+      - traefik.http.routers.{{ service_name }}.middlewares=https_redirect
+      - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
+      # https
+      - traefik.http.routers.{{ service_name }}-secure.entrypoints=web_secure
+      - traefik.http.routers.{{ service_name }}-secure.rule=Host(`{{ https_route }}`)
+      - traefik.http.routers.{{ service_name }}-secure.tls=true
+      - traefik.http.routers.{{ service_name }}-secure.tls.certresolver=cloudflare

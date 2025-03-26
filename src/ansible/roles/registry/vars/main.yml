@@ -1,0 +1,5 @@
+---
+# deploy
+service_stack_name: "registry"
+service_directory: "{{ stacks_directory }}/{{ service_stack_name }}"
+service_stack_file: "{{ service_directory }}/docker-compose.yml"

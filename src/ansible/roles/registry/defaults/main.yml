@@ -1,0 +1,14 @@
+---
+# core
+service_ip_addr: "{{ registry_dns_ip }}"
+
+# images
+service_name: "{{ registry_service }}"
+service_image: "registry:2"
+service_port: "5000"
+service_volume_name: "registry_volume"
+service_volume_path: "/data"
+
+# routes
+http_route: "{{ registry_local_domain }}"
+https_route: "{{ registry_global_domain }}"

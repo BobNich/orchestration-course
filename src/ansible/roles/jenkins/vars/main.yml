@@ -1,0 +1,12 @@
+---
+# deploy
+service_stack_name: "jenkins"
+service_directory: "{{ stacks_directory }}/{{ service_stack_name }}"
+service_stack_file: "{{ service_directory }}/docker-compose.yml"
+service_keys_directory: "{{ service_directory }}/keys"
+
+# agent
+agent_dockerfile_file: "{{ service_directory }}/Dockerfile"
+
+# networks
+internal_network_name: "jenkins_internal_network"

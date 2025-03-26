@@ -1,0 +1,35 @@
+---
+- name: "Deploy DNS"
+  hosts: master
+  vars_files:
+    - "vault/main.yml"
+  roles:
+    - dns
+
+- name: "Deploy Proxy"
+  hosts: master
+  vars_files:
+    - "vault/main.yml"
+  roles:
+    - proxy
+
+- name: "Deploy Git"
+  hosts: master
+  vars_files:
+    - "vault/main.yml"
+  roles:
+    - gogs
+
+- name: "Deploy Registry"
+  hosts: master
+  vars_files:
+    - "vault/main.yml"
+  roles:
+    - registry
+
+- name: "Deploy Jenkins"
+  hosts: master
+  vars_files:
+    - "vault/main.yml"
+  roles:
+    - jenkins

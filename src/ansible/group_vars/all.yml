@@ -1,0 +1,45 @@
+---
+# machines
+stacks_directory: "/home/{{ ansible_user }}"
+
+# public network
+public_network_name: "public_network"
+
+# domains
+local_domain: "localhost"
+global_domain: "{{ vault_domain_name }}"
+
+# dns
+dns_network_name: "dns_network"
+dns_network_subnet: "172.20.0.0/24"
+dns_service_ip: "172.20.0.200"
+
+# proxy
+proxy_service: "proxy"
+proxy_local_domain: "{{ proxy_service }}.{{ local_domain }}"
+proxy_dns_ip: "172.20.0.3"
+
+# registry
+registry_service: "registry"
+registry_local_domain: "{{ registry_service }}.{{ local_domain }}"
+registry_global_domain: "{{ registry_service }}.{{ global_domain }}"
+registry_dns_ip: "172.20.0.7"
+
+# git
+git_service: "git"
+git_local_domain: "{{ git_service }}.{{ local_domain }}"
+git_global_domain: "{{ git_service }}.{{ global_domain }}"
+git_dns_ip: "172.20.0.4"
+
+# jenkins
+jenkins_service: "jenkins"
+jenkins_local_domain: "{{ jenkins_service }}.{{ local_domain }}"
+jenkins_global_domain: "{{ jenkins_service }}.{{ global_domain }}"
+jenkins_controller_dns_ip: "172.20.0.5"
+jenkins_agent_dns_ip: "172.20.0.6"
+
+# ports
+ssh_port: "22"
+http_port: "80"
+https_port: "443"
+dns_port: "53"

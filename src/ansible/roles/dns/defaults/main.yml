@@ -1,0 +1,3 @@
+---
+service_name: "dns"
+service_image: "coredns/coredns:latest"

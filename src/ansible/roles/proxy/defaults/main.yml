@@ -1,0 +1,13 @@
+---
+# proxy
+service_ip_addr: "{{ proxy_dns_ip }}"
+service_name: "{{ proxy_service }}"
+service_image: "traefik:latest"
+service_port: "8080"
+
+# routes
+http_route: "{{ proxy_local_domain }}"
+
+# hosting
+domain_name: "{{ global_domain }}"
+domain_owner_mail: "{{ vault_cloudflare_owner_mail }}"

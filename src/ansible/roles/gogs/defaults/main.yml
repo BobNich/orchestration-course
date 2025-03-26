@@ -1,0 +1,26 @@
+---
+# core
+service_ip_addr: "{{ git_dns_ip }}"
+
+# git
+service_name: "{{ git_service }}"
+service_image: "gogs/gogs"
+service_web_port: "3000"
+service_ssh_port: "10022"
+service_volume_name: "git_volume"
+service_volume_path: "/data"
+
+# database
+service_database_name: "postgres"
+service_database_image: "postgres:17"
+service_database_volume_name: "postgres_volume"
+service_database_volume_path: "/var/lib/postgresql/data"
+
+# configuration
+database_user: "{{ vault_postgres_user }}"
+database_password: "{{ vault_postgres_password }}"
+database_name: "{{ vault_postgres_db }}"
+
+# routes
+http_route: "{{ git_local_domain }}"
+https_route: "{{ git_global_domain }}"

@@ -1,0 +1,69 @@
+networks:
+  public-network:
+    external: true
+    name: "{{ public_network_name }}"
+  dns-network:
+    external: true
+    name: "{{ dns_network_name }}"
+  internal-network:
+    internal: true
+    name: "{{ internal_network_name }}"
+
+volumes:
+  controller-data:
+    name: "{{ controller_volume_name }}"
+    driver: local
+  agent-data:
+    name: "{{ agent_volume_name }}"
+    driver: local
+
+services:
+  controller:
+    image: "{{ controller_image }}"
+    container_name: "{{ controller_name }}"
+    volumes:
+      - type: volume
+        source: controller-data
+        target: "{{ controller_volume_path }}"
+    networks:
+      public-network:
+      internal-network:
+      dns-network:
+        ipv4_address: {{ controller_ip_addr }}
+    dns: {{ dns_service_ip }}
+    labels:
+      # core
+      - traefik.enable=true
+      - traefik.http.services.{{ service_name }}.loadbalancer.server.port={{ controller_public_port }}
+      # http
+      - traefik.http.routers.{{ service_name }}.entrypoints=web_insecure
+      - traefik.http.routers.{{ service_name }}.rule=Host(`{{ http_route }}`)
+      # http -> https bridge
+      - traefik.http.routers.{{ service_name }}.middlewares=https_redirect
+      - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
+      # https
+      - traefik.http.routers.{{ service_name }}-secure.entrypoints=web_secure
+      - traefik.http.routers.{{ service_name }}-secure.rule=Host(`{{ https_route }}`)
+      - traefik.http.routers.{{ service_name }}-secure.tls=true
+      - traefik.http.routers.{{ service_name }}-secure.tls.certresolver=cloudflare
+  jenkins-agent:
+    privileged: true
+    image: "{{ agent_image }}"
+    container_name: "{{ agent_name }}"
+    depends_on:
+      - controller
+    volumes:
+      - type: volume
+        source: agent-data
+        target: "{{ agent_volume_path }}"
+      - type: bind
+        source: {{ service_keys_directory }}
+        target: {{ agent_target_ssh_dir }}
+        read_only: true
+    networks:
+      internal-network:
+      dns-network:
+        ipv4_address: {{ agent_ip_addr }}
+    dns: {{ dns_service_ip }}
+    environment:
+      - SSH_PUBLIC_KEY_DIR={{ agent_target_ssh_dir }}

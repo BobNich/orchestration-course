@@ -1,0 +1,24 @@
+networks:
+  dns-network:
+    driver: bridge
+    internal: false
+    ipam:
+      driver: default
+      config:
+        - subnet: {{ dns_network_subnet }}
+    name: "{{ dns_network_name }}"
+
+services:
+  dns:
+    image: "{{ service_image }}"
+    container_name: "{{ service_name }}"
+    networks:
+      dns-network:
+        ipv4_address: {{ dns_service_ip }}
+    ports:
+      - "{{ dns_port }}:{{ dns_port }}/udp"
+    command: -conf /etc/coredns/Corefile
+    volumes:
+      - type: bind
+        source: ./Corefile
+        target: /etc/coredns/Corefile

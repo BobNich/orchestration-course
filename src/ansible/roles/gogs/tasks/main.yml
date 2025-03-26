@@ -1,0 +1,17 @@
+---
+- name: Ensure Gogs directory exists
+  file:
+    path: "{{ service_directory }}"
+    state: directory
+
+- name: Copy Templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: docker-compose.yml, dest: '{{ service_stack_file }}' }
+
+- name: Deploy Gogs using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ service_directory }}"
+    state: present

@@ -1,0 +1,9 @@
+fullnameOverride: "yawl-chronograf"
+
+ingress:
+  enabled: true
+  hostname: chronograf.localhost
+  className: nginx
+  annotations:
+     kubernetes.io/ingress.class: "nginx"
+  path: /

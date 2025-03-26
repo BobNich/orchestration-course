@@ -1,0 +1,6 @@
+---
+# deploy
+service_stack_name: "proxy"
+service_directory: "{{ stacks_directory }}/{{ service_stack_name }}"
+service_stack_file: "{{ service_directory }}/docker-compose.yml"
+service_config_file: "{{ service_directory }}/traefik.yml"

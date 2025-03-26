@@ -1,0 +1,27 @@
+---
+- name: Ensure Jenkins directory exists
+  file:
+    path: "{{ service_directory }}"
+    state: directory
+
+- name: Copy Templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: docker-compose.yml, dest: '{{ service_stack_file }}' }
+    - { src: Dockerfile, dest: '{{ agent_dockerfile_file }}' }
+
+- name: Build Jenkins-agent image if not exist
+  community.docker.docker_image:
+    build:
+      path: "{{ service_directory }}"
+    name: "{{ agent_image }}"
+    tag: "latest"
+    push: true
+    source: build
+
+- name: Deploy Jenkins using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ service_directory }}"
+    state: present
