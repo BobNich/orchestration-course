@@ -13,19 +13,19 @@
   roles:
     - proxy
 
-- name: "Deploy Git"
-  hosts: master
-  vars_files:
-    - "vault/main.yml"
-  roles:
-    - gogs
-
 - name: "Deploy Registry"
   hosts: master
   vars_files:
     - "vault/main.yml"
   roles:
     - registry
+
+- name: "Deploy Git"
+  hosts: master
+  vars_files:
+    - "vault/main.yml"
+  roles:
+    - gogs
 
 - name: "Deploy Jenkins"
   hosts: master
