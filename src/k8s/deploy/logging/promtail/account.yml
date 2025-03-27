@@ -5,4 +5,3 @@ metadata:
   name: promtail
   labels:
     app.kubernetes.io/name: promtail
-  annotations: {}
