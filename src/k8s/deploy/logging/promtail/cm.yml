@@ -28,15 +28,20 @@ data:
           labels:
             job: systemd-journal
         relabel_configs:
-          - source_labels:
-              - __journal__hostname
-            target_label: hostname
-          - source_labels:
-              - __journal__systemd_unit
-            target_label: unit
-          - source_labels:
-              - __journal_priority_keyword
-            target_label: level
+          - source_labels: ['__journal__hostname']
+            target_label: host
+          - source_labels: ['__journal__systemd_unit']
+            target_label: systemd_unit
+            regex: '(.+)'
+          - source_labels: ['__journal__systemd_user_unit']
+            target_label: systemd_user_unit
+            regex: '(.+)'
+          - source_labels: ['__journal__transport']
+            target_label: transport
+            regex: '(.+)'
+          - source_labels: ['__journal_priority_keyword']
+            target_label: severity
+            regex: '(.+)'
 
       - job_name: pod-logs
         kubernetes_sd_configs:
@@ -45,11 +50,6 @@ data:
           - cri: {}
           - docker: {}
         relabel_configs:
-          - source_labels:
-              - __meta_kubernetes_pod_node_name
-            target_label: __host__
-          - action: labelmap
-            regex: __meta_kubernetes_pod_label_(.+)
           - action: replace
             replacement: $1
             separator: /
@@ -57,6 +57,12 @@ data:
               - __meta_kubernetes_namespace
               - __meta_kubernetes_pod_name
             target_label: job
+          - replacement: /var/log/pods/*$1/*.log
+            separator: /
+            source_labels:
+              - __meta_kubernetes_pod_uid
+              - __meta_kubernetes_pod_container_name
+            target_label: __path__
           - action: replace
             source_labels:
               - __meta_kubernetes_namespace
@@ -69,9 +75,3 @@ data:
             source_labels:
               - __meta_kubernetes_pod_container_name
             target_label: container
-          - replacement: /var/log/pods/*$1/*.log
-            separator: /
-            source_labels:
-              - __meta_kubernetes_pod_uid
-              - __meta_kubernetes_pod_container_name
-            target_label: __path__
